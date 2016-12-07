@@ -5,14 +5,13 @@ describe('Updating records', () => {
   let joe;
 
   beforeEach((done) => {
-    joe = new User({ name: 'Joe '})
+    joe = new User({ name: 'Joe'})
     joe.save()
       .then(() => done());
   });
 
   function assertName(operation, done) {
     operation
-    // .find({}) returns the entire collection
       .then(() => User.find({}))
       .then((users) => {
         assert(users.length === 1);
@@ -30,5 +29,26 @@ describe('Updating records', () => {
   it('a model instance can update', (done) => {
     // bulk update using an object
     assertName(joe.update({ name: 'Alex' }), done)
+  });
+
+  it('A model class can update', (done) => {
+    assertName(
+      User.update({ name: 'Joe' }, { name: 'Alex' }),
+      done
+    );
+  });
+
+  it('A model class can update one record', (done) => {
+    assertName(
+      User.findOneAndUpdate({ name: 'Joe' }, { name: 'Alex' }),
+      done
+    );
+  });
+
+  it('A model class can find a record with an Id and update', (done) => {
+    assertName(
+      User.findByIdAndUpdate(joe._id, { name: 'Alex' }),
+      done
+    );
   });
 });
