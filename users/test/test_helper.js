@@ -1,5 +1,6 @@
 // All code needed to set up our testing environment
 const mongoose = require('mongoose');
+
 // Referencing the ES6 implementation of promises
 mongoose.Promise = global.Promise;
 
