@@ -12,11 +12,27 @@ const UserSchema = new Schema({
     },
     required: [true, 'Name is required.']
   },
-  postCount: Number,
-  posts: [PostSchema]
+  // eg of subdocuments
+  posts: [PostSchema],
+  likes: Number,
+  blogPosts: [{
+    type: Schema.Types.ObjectId,
+    ref: 'blogPost'
+  }]
 });
 
+// Creating a virtual property
+// .get is a getter
+UserSchema.virtual('postCount').get(function() {
+  return this.posts.length;
+});
 
+UserSchema.pre('remove', function(next) {
+  const BlogPost = mongoose.model('blogPost');
+  // Go through all blog posts. If the id is in the array of the users blogposts, remove it.
+  BlogPost.remove({ _id: { $in: this.blogPosts } })
+    .then(() => next());
+});
 
 // Create the model called 'user' with the schema from above
 // We can now refer to the User variable as the 'class' of users

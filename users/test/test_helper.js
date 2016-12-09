@@ -19,8 +19,13 @@ before((done) => {
 
 // Add hook which is a function that will be executed before each test
 beforeEach((done) => {
-  mongoose.connection.collections.users.drop(() => {
-    // Ready to run the next test!
-    done();
+  // mongo changes collection names to lowercase
+  const { users, comments, blogposts } = mongoose.connection.collections;
+  users.drop(() => {
+    comments.drop(() => {
+      blogposts.drop(() => {
+        done();
+      });
+    });
   });
-})
+});
